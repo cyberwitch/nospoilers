@@ -26,7 +26,6 @@ export class ShowPicker extends React.Component<ShowPickerProps, ShowPickerState
     return (
       <AsyncTypeahead
         clearButton={true}
-        filterBy={() => true}
         isLoading={this.state.isLoading}
         labelKey={(show: Show) => show.name}
         onSearch={query => {

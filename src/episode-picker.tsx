@@ -32,7 +32,6 @@ export class EpisodePicker extends React.Component<EpisodePickerProps, EpisodePi
     return (
       <Typeahead
         clearButton={true}
-        filterBy={() => true}
         isLoading={this.state.isLoading}
         labelKey={this.formatEpisodeName}
         onChange={selected => this.props.onChange(selected[0])}
