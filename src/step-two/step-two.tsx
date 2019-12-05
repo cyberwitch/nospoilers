@@ -58,7 +58,7 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
                                 submitted: false
                               })}/>
               </Form.Group>
-              <Button variant="primary" type="submit">Search</Button>
+              <Button disabled={this.state.loading} variant="primary" type="submit">Search</Button>
             </Form>
           </Jumbotron>
 
@@ -99,30 +99,30 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
   onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    this.setState({loading: true, submitted: true});
+    if (!this.state.loading) {
+      this.setState({loading: true, pages: [], submitted: true});
 
-    wiki.search(this.state.query).then(searchResponse => {
-      const results = JSON.parse(searchResponse);
+      wiki.search(this.state.query).then(searchResponse => {
+        const results = JSON.parse(searchResponse);
 
-      if (results.query.search.length) {
-        results.query.search.forEach((page: Page) => {
-          const date = new Date(this.props.nextEpisode!.airstamp);
-          date.setDate(date.getDate() - 1);
+        if (results.query.search.length) {
+          Promise.all(results.query.search.map((page: Page) => {
+            const date = new Date(this.props.nextEpisode!.airstamp);
+            date.setDate(date.getDate() - 1);
 
-          wiki.getRevision(page.title, date.toISOString()).then(getRevisionResponse => {
-            const pages = JSON.parse(getRevisionResponse).query.pages;
-            const revisions = pages[Object.keys(pages)[0]].revisions;
+            return wiki.getRevision(page.title, date.toISOString()).then(getRevisionResponse => {
+              const pages = JSON.parse(getRevisionResponse).query.pages;
+              const revisions = pages[Object.keys(pages)[0]].revisions;
 
-            if (revisions && revisions.length) {
-              this.setState({pages: this.state.pages.concat([{title: page.title, oldid: revisions[0].revid}])});
-            }
-          }).finally(() => {
-            this.setState({loading: false});
-          });
-        });
-      }
-    }).catch(() => {
-      this.setState({loading: false});
-    });
+              if (revisions && revisions.length) {
+                this.setState({pages: this.state.pages.concat([{title: page.title, oldid: revisions[0].revid}])});
+              }
+            });
+          })).finally(() => this.setState({loading: false}));
+        }
+      }).catch(() => {
+        this.setState({loading: false});
+      });
+    }
   }
 }
