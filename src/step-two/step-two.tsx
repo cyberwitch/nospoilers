@@ -90,9 +90,9 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
         </Tabs>
       );
     } else if (this.state.loading) {
-      return <Alert variant="primary">"Searching..."</Alert>;
+      return <Alert variant="primary">Searching...</Alert>;
     } else if (this.state.submitted) {
-      return <Alert variant="danger">"Sorry, no results were found from before the next episode aired :("</Alert>;
+      return <Alert variant="danger">Sorry, no results were found from before the next episode aired :(</Alert>;
     }
   }
 
@@ -121,7 +121,7 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
           });
         });
       }
-    }).finally(() => {
+    }).catch(() => {
       this.setState({loading: false});
     });
   }
