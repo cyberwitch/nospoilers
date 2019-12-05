@@ -107,10 +107,7 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
 
         if (results.query.search.length) {
           Promise.all(results.query.search.map((page: Page) => {
-            const date = new Date(this.props.nextEpisode!.airstamp);
-            date.setDate(date.getDate() - 1);
-
-            return wiki.getRevision(page.title, date.toISOString()).then(getRevisionResponse => {
+            return wiki.getRevision(page.title, this.props.nextEpisode!.airstamp).then(getRevisionResponse => {
               const pages = JSON.parse(getRevisionResponse).query.pages;
               const revisions = pages[Object.keys(pages)[0]].revisions;
 
