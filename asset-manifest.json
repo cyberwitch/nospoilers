@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nospoilers/static/css/main.918562b8.chunk.css",
-    "main.js": "/nospoilers/static/js/main.a39cd725.chunk.js",
-    "main.js.map": "/nospoilers/static/js/main.a39cd725.chunk.js.map",
+    "main.js": "/nospoilers/static/js/main.babb047d.chunk.js",
+    "main.js.map": "/nospoilers/static/js/main.babb047d.chunk.js.map",
     "runtime-main.js": "/nospoilers/static/js/runtime-main.77d7a79e.js",
     "runtime-main.js.map": "/nospoilers/static/js/runtime-main.77d7a79e.js.map",
     "static/css/2.693e7f7a.chunk.css": "/nospoilers/static/css/2.693e7f7a.chunk.css",
     "static/js/2.23f24c81.chunk.js": "/nospoilers/static/js/2.23f24c81.chunk.js",
     "static/js/2.23f24c81.chunk.js.map": "/nospoilers/static/js/2.23f24c81.chunk.js.map",
     "index.html": "/nospoilers/index.html",
-    "precache-manifest.afba0c2c537ea4a95c58c38691b0d354.js": "/nospoilers/precache-manifest.afba0c2c537ea4a95c58c38691b0d354.js",
+    "precache-manifest.db78b04267967228b8de021f99b409ad.js": "/nospoilers/precache-manifest.db78b04267967228b8de021f99b409ad.js",
     "service-worker.js": "/nospoilers/service-worker.js",
     "static/css/2.693e7f7a.chunk.css.map": "/nospoilers/static/css/2.693e7f7a.chunk.css.map",
     "static/css/main.918562b8.chunk.css.map": "/nospoilers/static/css/main.918562b8.chunk.css.map"
@@ -19,6 +19,6 @@
     "static/css/2.693e7f7a.chunk.css",
     "static/js/2.23f24c81.chunk.js",
     "static/css/main.918562b8.chunk.css",
-    "static/js/main.a39cd725.chunk.js"
+    "static/js/main.babb047d.chunk.js"
   ]
 }
