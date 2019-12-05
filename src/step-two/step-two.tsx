@@ -6,6 +6,7 @@ import React from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
+import { Browser } from "./browser";
 import { Episode } from "../tvmaze/types";
 import { Page } from "../wikimedia/types";
 import { Wikimedia } from "../wikimedia/wikimedia";
@@ -82,7 +83,7 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
           {this.state.pages.map(page => {
             return (
               <Tab key={page.title} eventKey={page.title} title={page.title}>
-                {page.title}
+                <Browser page={page} wiki={wiki} />
               </Tab>
             );
           })}
@@ -113,7 +114,7 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
             const revisions = pages[Object.keys(pages)[0]].revisions;
 
             if (revisions && revisions.length) {
-              this.setState({pages: this.state.pages.concat([{title: page.title, revid: revisions[0].revid}])});
+              this.setState({pages: this.state.pages.concat([{title: page.title, oldid: revisions[0].revid}])});
             }
           }).finally(() => {
             this.setState({loading: false});

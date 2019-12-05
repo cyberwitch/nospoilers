@@ -1,4 +1,4 @@
 export interface Page {
-  revid: number;
+  oldid: number;
   title: string;
 }

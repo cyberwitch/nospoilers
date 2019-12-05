@@ -35,4 +35,16 @@ export class Wikimedia {
       }
     });
   }
+
+  getPage(oldid: number) {
+    return rp.get({
+      uri: this.endpoint,
+      qs: {
+        origin: "*",
+        action: "parse",
+        format: "json",
+        oldid
+      }
+    });
+  }
 }
