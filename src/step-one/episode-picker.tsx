@@ -1,11 +1,12 @@
 import React from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 
-import { Episode, Season, Show } from "./types";
-import { tvmaze } from "./tvmaze";
+import { Episode, Season, Show } from "../tvmaze/types";
+import { tvmaze } from "../tvmaze/tvmaze";
 
 interface EpisodePickerProps {
-  onChange: (selected: Episode) => void;
+  onChange: (episode?: Episode, nextEpisode?: Episode) => void;
+  nextSeason?: Season;
   show: Show;
   season?: Season;
   selected?: Episode;
@@ -14,6 +15,7 @@ interface EpisodePickerProps {
 interface EpisodePickerState {
   isLoading: boolean;
   results: Episode[];
+  firstEpsiodeNextSeason?: Episode;
 }
 
 export class EpisodePicker extends React.Component<EpisodePickerProps, EpisodePickerState> {
@@ -26,15 +28,17 @@ export class EpisodePicker extends React.Component<EpisodePickerProps, EpisodePi
     };
 
     this.fetchEpisodes = this.fetchEpisodes.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   render() {
     return (
       <Typeahead
+        id="episode-picker"
         clearButton={true}
         isLoading={this.state.isLoading}
         labelKey={this.formatEpisodeName}
-        onChange={selected => this.props.onChange(selected[0])}
+        onChange={this.onChange}
         options={this.state.results}
         renderMenuItemChildren={episode => {
           if (episode) {
@@ -60,26 +64,51 @@ export class EpisodePicker extends React.Component<EpisodePickerProps, EpisodePi
 
     let episodeNumber: string | number = episode.number;
     if (episodeNumber < 10) {
-      episodeNumber = `0${episodeNumber}`;
+      episodeNumber = `0${episodeNumber || "0"}`;
     }
 
     return `${seasonNumber}.${episodeNumber} - ${episode.name}`;
   }
 
   fetchEpisodes() {
+    const show = this.props.show.id.toString();
+
     this.setState({isLoading: true});
 
-    let xhr;
-
     if (this.props.season) {
-      xhr = tvmaze.shows.seasonEpisodes(this.props.season.id.toString());
+      tvmaze.shows.seasonEpisodes(this.props.season.id.toString())
+        .then(results => {
+          this.setState({results});
+
+          if (this.props.nextSeason) {
+            tvmaze.shows.episodebynumber(show, this.props.nextSeason.number.toString(), "1")
+              .then(firstEpsiodeNextSeason => this.setState({firstEpsiodeNextSeason}))
+              .finally(() => this.setState({isLoading: false}));
+          } else {
+            this.setState({firstEpsiodeNextSeason: undefined, isLoading: false});
+          }
+        }).catch(() => {
+          this.setState({isLoading: false});
+      })
     } else {
-      xhr = tvmaze.shows.episodes(this.props.show.id.toString());
+      tvmaze.shows.episodes(show)
+        .then(results => this.setState({results}))
+        .finally(() => this.setState({isLoading: false}));
     }
+  }
 
+  onChange(selected: Episode[]) {
+    if (selected.length) {
+      const nextEpisodeIndex = this.state.results.indexOf(selected[0]) + 1;
 
-   xhr.then(results => this.setState({results}))
-     .finally(() => this.setState({isLoading: false}));
+      if (this.state.results.length <= nextEpisodeIndex) {
+        this.props.onChange(selected[0], this.state.firstEpsiodeNextSeason);
+      } else {
+        this.props.onChange(selected[0], this.state.results[nextEpisodeIndex]);
+      }
+    } else {
+      this.props.onChange();
+    }
   }
 
   componentDidMount() {

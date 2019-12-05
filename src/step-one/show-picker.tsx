@@ -1,8 +1,8 @@
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import React from "react";
 
-import { Show } from "./types";
-import { tvmaze } from "./tvmaze";
+import { Show } from "../tvmaze/types";
+import { tvmaze } from "../tvmaze/tvmaze";
 
 interface ShowPickerProps {
   onChange: (selected: Show) => void;
@@ -25,6 +25,7 @@ export class ShowPicker extends React.Component<ShowPickerProps, ShowPickerState
   render() {
     return (
       <AsyncTypeahead
+        id="show-picker"
         clearButton={true}
         isLoading={this.state.isLoading}
         labelKey={(show: Show) => show.name}

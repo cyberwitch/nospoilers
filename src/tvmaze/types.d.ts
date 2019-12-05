@@ -8,15 +8,15 @@ export interface Show {
   image?: Image;
 }
 
-interface Season {
+export interface Season {
   id: number;
   name: string;
   number: number;
   image?: Image;
 }
 
-interface Episode {
-  airdate: string;
+export interface Episode {
+  airstamp: string;
   id: number;
   name: string;
   number: number;
