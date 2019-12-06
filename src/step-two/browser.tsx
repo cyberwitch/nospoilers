@@ -29,7 +29,11 @@ export class Browser extends React.Component<BrowserProps, BrowserState> {
 
   componentDidMount() {
     this.props.wiki.getPage(this.props.page.oldid).then(response => {
-      this.setState({html: JSON.parse(response).parse.text["*"]});
+      const parsed = JSON.parse(response);
+
+      if (parsed.parse) {
+        this.setState({html: parsed.parse.text["*"]});
+      }
     });
   }
 }

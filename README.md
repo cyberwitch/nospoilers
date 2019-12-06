@@ -7,7 +7,6 @@ It will work by browsing the latest wiki page histories no later than the first 
 ## TODO
 
 * Add tests
-* Fix intra-wiki links
 * Add support for other wikis
 
 ---

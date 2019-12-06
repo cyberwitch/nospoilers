@@ -5,6 +5,7 @@ import Jumbotron from "react-bootstrap/Jumbotron";
 import React from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import Toast from "react-bootstrap/Toast";
 
 import { Browser } from "./browser";
 import { Episode } from "../tvmaze/types";
@@ -23,6 +24,7 @@ interface StepTwoState {
   query: string;
   loading?: boolean;
   submitted?: boolean;
+  toastVisible?: boolean;
 }
 
 export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
@@ -31,9 +33,11 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
 
     this.state = {
       pages: [],
-      query: ""
+      query: "",
+      toastVisible: false
     };
 
+    this.onClick = this.onClick.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -41,6 +45,11 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
     if (this.props.nextEpisode) {
       return (
         <React.Fragment>
+          <Toast show={this.state.toastVisible} onClose={() => this.setState({toastVisible: false})} autohide>
+            <Toast.Body onClick={() => window.scrollTo(0, 0)} className="alert-primary">
+              New tab opened!  Click here to scroll up.
+            </Toast.Body>
+          </Toast>
           <Jumbotron>
             <Alert variant="primary">
               You can browse Wikipedia below without any risk of spoilers beyond episode "{this.props.episode.name}".
@@ -96,6 +105,19 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
     }
   }
 
+  fetchPage(title: string) {
+    if (!this.state.pages.find(page => page.title === title)) {
+      return wiki.getRevision(title, this.props.nextEpisode!.airstamp).then(getRevisionResponse => {
+        const pages = JSON.parse(getRevisionResponse).query.pages;
+        const revisions = pages[Object.keys(pages)[0]].revisions;
+
+        if (revisions && revisions.length) {
+          this.setState({pages: this.state.pages.concat([{title, oldid: revisions[0].revid}])});
+        }
+      });
+    }
+  }
+
   onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -106,20 +128,37 @@ export class StepTwo extends React.Component<StepTwoProps, StepTwoState> {
         const results = JSON.parse(searchResponse);
 
         if (results.query.search.length) {
-          Promise.all(results.query.search.map((page: Page) => {
-            return wiki.getRevision(page.title, this.props.nextEpisode!.airstamp).then(getRevisionResponse => {
-              const pages = JSON.parse(getRevisionResponse).query.pages;
-              const revisions = pages[Object.keys(pages)[0]].revisions;
-
-              if (revisions && revisions.length) {
-                this.setState({pages: this.state.pages.concat([{title: page.title, oldid: revisions[0].revid}])});
-              }
-            });
-          })).finally(() => this.setState({loading: false}));
+          Promise.all(results.query.search.map((page: Page) => this.fetchPage(page.title))).finally(() => this.setState({loading: false}));
         }
       }).catch(() => {
         this.setState({loading: false});
       });
     }
+  }
+
+  onClick(e: MouseEvent) {
+    const element = e.target as HTMLElement;
+
+    if (element.tagName === "A") {
+      const anchor = element as HTMLAnchorElement;
+
+      if (anchor.pathname.startsWith("/wiki/")) {
+        const newtab = this.fetchPage(anchor.pathname.substring(6).replace(/_/g, " "));
+
+        newtab && newtab.then(() => this.setState({toastVisible: true}));
+      } else if (!anchor.href.startsWith(window.location.origin)) {
+        window.open(anchor.href, "_blank");
+      }
+
+      e.preventDefault();
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener("click", this.onClick);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("click", this.onClick)
   }
 }
