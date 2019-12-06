@@ -1,8 +1,16 @@
 ## No Spoilers
 
-NoSpoilers is a webapp for safely browsing wikis free of spoilers. You select a TV series, and what episode you have seen up to, and it provides a portal with which to browse a wiki without risk of seeing a spoiler.
+No Spoilers is a webapp for safely browsing wikis free of spoilers. You select a TV series, and what episode you have seen up to, and it provides a portal with which to browse a wiki without risk of seeing a spoiler.
 
 It will work by browsing the latest wiki page histories no later than the first unseen episode of the show.
+
+## TODO
+
+* Add tests
+* Fix intra-wiki links
+* Add support for other wikis
+
+---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
